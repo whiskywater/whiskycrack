@@ -39,6 +39,10 @@ def main():
         print("Error: Output file not specified. Please use the -f option to specify the output file.")
         return
 
+    if args.l is None:
+        print("Error: No length specified. Please use the -l option to specify the length.")
+        return    
+
     entry_length = args.l
     words = args.w if args.w else []
     output_file = args.f
