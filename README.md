@@ -8,7 +8,11 @@ USAGE: python whiskycrack.py
 -n specifies if numbers should be included
 -c specifies if capitol numbers should be included
 -s specifies if special characters should be included.
+-r specifies if user wants to include specific characters.
+-a specifies if user wants to add to an existing wordlist.
+-d specifies the default settings for entry output (lower case alphabet, use this setting if you want incremental lower case)
 
 Ex.
-python whiskycrack.py -l 3 -n -c -s -f wordlist.txt
+python whiskycrack.py -l 3 -d -n -c -s -f wordlist.txt
 python whiskycrack.py -l 0 -w cat dog frog -f wordlist.txt
+python whiskycrack.py -a -l 3 -r XYZ -f wordlist.txt
