@@ -36,14 +36,10 @@ def generate_wordlist(entry_length, words, output_file, include_numbers, include
                     combined_word = ''.join(combination)
                     file.write(combined_word + '\n')
         else:
-            if default and not any([include_caps, include_numbers, include_special, incremental_alphabet]):
+            if not default and not (include_caps or include_numbers or include_special or incremental_alphabet):
                 print("Error: Please specify at least one character type or use -d for lowercase letters.")
                 return
-            elif not default and not any([include_caps, include_numbers, include_special, incremental_alphabet]):
-                print("Error: Please specify at least one character type.")
-                return
 
-            # Estimate wordlist size
             wordlist_size = estimate_wordlist_size(entry_length, characters)
             print("Estimated wordlist size (sizes may vary):", wordlist_size, "bytes")
 
