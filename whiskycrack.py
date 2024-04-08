@@ -1,6 +1,7 @@
 import argparse
 import itertools
 import string
+import time
 
 def calculate_wordlist_size(entry_length, characters):
     return len(characters) ** entry_length
@@ -11,19 +12,24 @@ def estimate_wordlist_size(entry_length, characters):
     return total_combinations * entry_length * bytes_per_character
 
 def generate_wordlist(entry_length, words, output_file, include_numbers, include_caps, include_special, incremental_alphabet, append_mode=False, default=False):
+    characters = ''
+
     if default:
         characters = string.ascii_lowercase
-    else:
-        characters = ''
-        if include_caps:
-            characters += string.ascii_uppercase
-        if include_numbers:
-            characters += string.digits
-        if include_special:
-            characters += string.punctuation
+
+    if include_caps:
+        characters += string.ascii_uppercase
+    if include_numbers:
+        characters += string.digits
+    if include_special:
+        characters += string.punctuation
 
     if incremental_alphabet:
         characters += ''.join(sorted(set(incremental_alphabet)))
+
+    if not characters:
+        print("Error: Please specify at least one character type or use -d for lowercase letters.")
+        return
 
     mode = 'a' if append_mode else 'w'
 
@@ -36,23 +42,28 @@ def generate_wordlist(entry_length, words, output_file, include_numbers, include
                     combined_word = ''.join(combination)
                     file.write(combined_word + '\n')
         else:
-            if not default and not (include_caps or include_numbers or include_special or incremental_alphabet):
-                print("Error: Please specify at least one character type or use -d for lowercase letters.")
-                return
-
             wordlist_size = estimate_wordlist_size(entry_length, characters)
             print("Estimated wordlist size (sizes may vary):", wordlist_size, "bytes")
 
+            bytes_per_second = 1000000  # Adjust this value based on your system's processing speed
+            estimated_time_seconds = wordlist_size / bytes_per_second
+            print("Estimated time to generate wordlist:", estimated_time_seconds, "seconds")
+
             if wordlist_size > 1000000:
-                print("Warning: The estimated wordlist size is", wordlist_size, "bytes. are you sure you want to continue?")
+                print("Warning: The estimated wordlist size is", wordlist_size, "bytes. Are you sure you want to continue?")
                 confirmation = input("Enter 'y' to continue and 'n' to cancel: ")
                 if confirmation.lower() != 'y':
                     print("Wordlist generation aborted.")
                     return
 
+            start_time = time.time()
             for combination in itertools.product(characters, repeat=entry_length):
                 word = ''.join(combination)
                 file.write(word + '\n')
+
+            elapsed_time = time.time() - start_time
+            remaining_time = max(0, estimated_time_seconds - elapsed_time)
+            print("Elapsed time:", elapsed_time, "seconds | Estimated remaining time:", remaining_time, "seconds")
 
 def main():
     parser = argparse.ArgumentParser(description='Generate a wordlist.')
